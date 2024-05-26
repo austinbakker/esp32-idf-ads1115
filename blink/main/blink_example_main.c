@@ -91,7 +91,7 @@ void app_main(void)
     connect_direct_to_ads1115();
     /* Toggle the LED state */
     s_led_state = !s_led_state;
-    vTaskDelay(CONFIG_BLINK_PERIOD / portTICK_PERIOD_MS);
+    vTaskDelay(5000 / portTICK_PERIOD_MS);
   }
 }
 
@@ -209,14 +209,16 @@ void connect_direct_to_ads1115()
   // ret_err += i2c_master_stop(cmd); // stop i2c commands
 
   esp_err_t ret = i2c_master_cmd_begin(i2c_port, cmd, 50 / portTICK_PERIOD_MS); // send byte every 50ms
-
+  uint16_t total = read_byte_1 << 8 | read_byte_2;
   if (ret == ESP_OK)
   {
     printf("Connected to ads1115\n");
-    printf("read_byte_1 %i  0x%02x \n", read_byte_1, read_byte_1);
-    printf("read_byte_2 %i  0x%02x \n", read_byte_2, read_byte_2);
-    printf("read_byte_1_2 sum %i  0x%02x \n", read_byte_1 + read_byte_2, read_byte_1 + read_byte_2);
-    printf("read_byte_1_2 sum test %i   \n", read_byte_1 << 8 | read_byte_2);
+    printf("Total %i \n", total);
+    printf("Total Volts %f \n", total * (4096.0 / 32768.0));
+    // printf("read_byte_1 %i  0x%02x \n", read_byte_1, read_byte_1);
+    // printf("read_byte_2 %i  0x%02x \n", read_byte_2, read_byte_2);
+    // printf("read_byte_1_2 sum %i  0x%02x \n", read_byte_1 + read_byte_2, read_byte_1 + read_byte_2);
+    // printf("read_byte_1_2 sum test %i   \n", read_byte_1 << 8 | read_byte_2);
     // 00000000 1 1 1 1 1 1 11
     //
   }
